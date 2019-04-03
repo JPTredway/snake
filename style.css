@@ -1,0 +1,44 @@
+@import url("https://fonts.googleapis.com/css?family=Notable");
+
+html {
+  box-sizing: border-box;
+}
+
+html * {
+  box-sizing: inherit;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(rgba(100, 100, 100, 1), rgba(100, 100, 100, 0.5));
+  min-height: 100vh;
+}
+
+nav {
+  color: #fff;
+  font-family: "Notable", sans-serif;
+  font-size: 2.5rem;
+  padding: 0.5rem 0;
+  text-align: center;
+}
+
+#game {
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#score {
+  text-transform: uppercase;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#score > h2 {
+  margin: 0 1rem;
+}
