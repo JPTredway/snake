@@ -48,6 +48,9 @@ class CanvasDisplay {
   }
 
   drawSnake(snake) {
+    this.ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+    this.ctx.fillRect(snake.x, snake.y, scale, scale);
+
     for (let seg of snake.body) {
       this.ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
       this.ctx.fillRect(seg.x, seg.y, scale, scale);
@@ -82,6 +85,7 @@ class CanvasDisplay {
   }
 
   update(state) {
+    console.log();
     this.clearDisplay(state.status);
     this.drawFood(state.food);
     this.drawSnake(state.snake);
@@ -129,17 +133,11 @@ class Segment {
     this.x = x;
     this.y = y;
   }
-
-  update(x, y) {
-    this.x = x;
-    this.y = y;
-  }
 }
 
 class Food extends Segment {
-  constructor(x = 0, y = 0) {
-    super(x, y);
-
+  constructor() {
+    super();
     this.update();
   }
 
@@ -150,11 +148,13 @@ class Food extends Segment {
   }
 }
 
-class Head extends Segment {
+class Snake {
   constructor(x, y, xSpeed, ySpeed) {
-    super(x, y);
+    this.x = x;
+    this.y = y;
     this.xSpeed = xSpeed;
     this.ySpeed = ySpeed;
+    this.body = [];
   }
 
   ranIntoEdge() {
@@ -174,14 +174,14 @@ class Head extends Segment {
     return false;
   }
 
-  ranIntoSelf(body) {
-    for (let i = 1; i < body.length; i++) {
-      if (this.x === body[i].x && this.y === body[i].y) return true;
+  ranIntoSelf() {
+    for (let i = 1; i < this.body.length; i++) {
+      if (this.x === this.body[i].x && this.y === this.body[i].y) return true;
     }
     return false;
   }
 
-  update(dir) {
+  setDir(dir) {
     if (dir.has("ArrowUp")) {
       this.xSpeed = 0;
       this.ySpeed = -1;
@@ -199,30 +199,17 @@ class Head extends Segment {
     this.x = this.x + this.xSpeed * scale;
     this.y = this.y + this.ySpeed * scale;
   }
-}
-
-class Snake {
-  constructor(x, y) {
-    this.head = new Head(x, y);
-    this.body = [this.head];
-  }
 
   update(state, dir) {
-    if (this.head.ranIntoEdge() || this.head.ranIntoSelf(this.body)) {
+    if (this.ranIntoEdge() || this.ranIntoSelf()) {
       state.setStatus("lost");
       return;
     }
 
-    if (this.head.ranIntoFood(state.food)) {
-      this.body.push(new Segment());
-    }
+    this.body = [new Segment(this.x, this.y), ...this.body];
+    if (!this.ranIntoFood(state.food)) this.body.pop();
 
-    for (let i = this.body.length - 1; i > 0; i--) {
-      const prev = this.body[i - 1];
-      this.body[i].update(prev.x, prev.y);
-    }
-
-    this.head.update(dir);
+    this.setDir(dir);
   }
 }
 
